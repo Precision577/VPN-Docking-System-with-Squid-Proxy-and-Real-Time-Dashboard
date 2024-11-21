@@ -1,0 +1,12 @@
+docker
+streamlit
+streamlit-autorefresh
+uvicorn
+watchdog
+fastapi
+websocket-client
+pandas
+asyncio
+requests
+pathlib
+

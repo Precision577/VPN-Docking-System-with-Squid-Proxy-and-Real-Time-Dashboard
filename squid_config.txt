@@ -1,0 +1,78 @@
+# Squid configuration file to allow all connections and hide proxy headers
+
+# Define safe ports that are allowed for traffic
+acl Safe_ports port 80          # http
+acl Safe_ports port 443         # https
+acl Safe_ports port 21          # ftp
+acl Safe_ports port 70          # gopher
+acl Safe_ports port 210         # wais
+acl Safe_ports port 1025-65535  # unregistered ports
+acl Safe_ports port 280         # http-mgmt
+acl Safe_ports port 488         # gss-http
+acl Safe_ports port 591         # filemaker
+acl Safe_ports port 777         # multiling http
+
+# Define SSL ports that can be used for CONNECT method
+acl SSL_ports port 443
+
+# Deny access to unsafe ports
+http_access deny !Safe_ports
+
+# Deny CONNECT to non-SSL ports (i.e., anything other than 443)
+http_access deny CONNECT !SSL_ports
+
+# Allow local machine to access cache manager
+http_access allow localhost manager
+http_access deny manager
+
+# Allow all access from any IP
+acl all src all
+http_access allow all
+
+# Custom headers to match a typical browser request
+request_header_add Accept "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
+request_header_add Accept-Encoding "gzip, deflate, br, zstd"
+request_header_add Accept-Language "en-US,en;q=0.8"
+request_header_add Cookie "csrftoken=pV5slsLbwMJwmPTD9y14ZGOystM58xfZbd0vs6jE0NJUKuHFfxxEYQiMpGi0PcN5"
+request_header_add Referer "https://search.brave.com/"
+request_header_add Sec-CH-UA "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Brave\";v=\"128\""
+request_header_add Sec-CH-UA-Arch "\"x86\""
+request_header_add Sec-CH-UA-Mobile "?0"
+request_header_add Sec-CH-UA-Model "\"\""
+request_header_add Sec-CH-UA-Platform "\"Linux\""
+request_header_add Sec-CH-UA-Platform-Version "\"6.2.0\""
+request_header_add Sec-Fetch-Dest "document"
+request_header_add Sec-Fetch-Mode "navigate"
+request_header_add Sec-Fetch-Site "cross-site"
+request_header_add Sec-Fetch-User "?1"
+request_header_add Sec-GPC "1"
+request_header_add Upgrade-Insecure-Requests "1"
+request_header_add User-Agent "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+
+# Remove proxy-related headers to prevent detection of proxy usage
+forwarded_for delete
+via off
+request_header_access X-Forwarded-For deny all
+request_header_access Via deny all
+request_header_access Forwarded deny all
+
+# Remove the Cache-Control header completely
+request_header_access Cache-Control deny all
+
+# Prefer IPv4 over IPv6 for DNS lookups
+dns_v4_first on
+
+# Squid listening port
+http_port 3128
+
+# Caching options (you can modify these based on your requirements)
+cache_mem 64 MB
+maximum_object_size_in_memory 512 KB
+maximum_object_size 4096 KB
+cache_dir ufs /var/spool/squid 1000 16 256
+access_log /var/log/squid/access.log
+cache_log /var/log/squid/cache.log
+
+# Make sure cache directories exist
+coredump_dir /var/spool/squid
+
