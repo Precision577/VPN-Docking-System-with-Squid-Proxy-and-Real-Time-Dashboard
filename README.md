@@ -1,6 +1,6 @@
 ﻿# VPN Docking System with Squid Proxy and Real-Time Dashboard
 
- /images/Node_1.png
+![Node 1](images/Node_1.png)
 
 ## Project Overview
 This project is a powerful, modular, and scalable VPN docking system designed to manage multiple VPN connections simultaneously. It achieves the following:
